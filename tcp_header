@@ -7,6 +7,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <netinet/ip.h>
+# include <arpa/inet.h>
 
 int main(){
   int sockfd,n;
@@ -14,6 +15,7 @@ int main(){
   struct sockaddr_in cliaddr;
   char buf[10000]; 
   int i;
+  char str[INET_ADDRSTRLEN];
 
   sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
   if (sockfd < 0){
@@ -25,6 +27,10 @@ int main(){
     printf(" before recvfrom\n");   
     n=recvfrom(sockfd,buf,10000,0,(struct sockaddr *)&cliaddr,&clilen);
     printf(" rec'd %d bytes\n",n);
+    printf("received from %s at PORT %d\n",
+		       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+		       ntohs(cliaddr.sin_port));
+
 
     struct iphdr *ip_hdr = (struct iphdr *)buf;
 
